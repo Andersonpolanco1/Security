@@ -18,36 +18,20 @@ namespace Auth.Controllers
     {
         //private readonly IConfiguration _configuration;
         private readonly ITokenService _tokenService;
+        private readonly IUserService _userService;
 
-        public LoginController(ITokenService tokenService)
+        public LoginController(ITokenService tokenService, IUserService userService)
         {
             _tokenService = tokenService;
+            _userService = userService;
         }
 
         [HttpPost]
         [AllowAnonymous]
         public IActionResult Post([FromBody] LoginRequestModel loginRequest)
         {
-            var user = FindUser(loginRequest);
+            var user = _userService.GetUserByCredentials(loginRequest.Username,loginRequest.Password);
             return user == null ? Ok("Invalid loggin attemp") : Ok(_tokenService.GenerateToken(user));
-
-
-        }
-
-        private User? FindUser(LoginRequestModel loginRequest)
-        {
-            if(loginRequest?.Username == "Apolanco")
-            {
-                return new User
-                {
-                    Id = Guid.NewGuid(),
-                    Username = "Apolanco",
-                    IsActive = true,
-                    Email = "Apolanco@gmail.com"
-                };
-            }
-
-            return null;
         }
     }
 }

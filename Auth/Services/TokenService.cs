@@ -29,7 +29,7 @@ namespace Auth.Services
                 audience: _jwtSettings.Audience,
                 claims: new List<Claim>()
                 {
-                    new Claim(ClaimTypes.Authentication,user.Id.ToString()),
+                    new Claim(ClaimTypes.Sid,user.Id.ToString()),
                     new Claim(ClaimTypes.NameIdentifier,user.Username),
                 },
                 expires: DateTime.Now.AddMinutes(_jwtSettings.ExpiresInMinutes),
