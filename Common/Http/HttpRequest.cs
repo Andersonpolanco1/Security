@@ -49,7 +49,6 @@ namespace Common.Http
 
                 var responseBody = await response.Content.ReadAsStringAsync();
                 return new Result<Tout>(HttpStatusCode.OK,string.Empty, JsonConvert.DeserializeObject<Tout>(responseBody));
-
             }
             catch (Exception ex)
             {
