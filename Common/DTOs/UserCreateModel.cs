@@ -1,4 +1,4 @@
-﻿namespace Auth.Models
+﻿namespace Common.Models
 {
     public class UserCreateModel
     {

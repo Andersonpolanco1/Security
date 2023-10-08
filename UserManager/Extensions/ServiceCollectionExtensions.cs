@@ -1,18 +1,25 @@
-﻿using Auth.Models.Settings;
+﻿using Common.CustomAuth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Runtime.CompilerServices;
 using System.Text;
+using UserManager.Models.Settings;
 
-namespace Auth.Extensions
+namespace UserManager.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddCustomAuth(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
+            #region ApiKey Scheme
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = ApiKeyAuthOptions.DefaultScheme;
+                options.DefaultChallengeScheme = ApiKeyAuthOptions.DefaultScheme;
+            }).AddScheme<ApiKeyAuthOptions, ApiKeyAuthHandler>(ApiKeyAuthOptions.DefaultScheme, apikeyOptions => new ApiKeyAuthOptions());
+            #endregion
+
+            #region Bearer Scheme
             var jwtSettings = configuration.GetSection(JwtSettings.SettingPath).Get<JwtSettings>();
-            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -28,6 +35,7 @@ namespace Auth.Extensions
                     ClockSkew = jwtSettings.ClockSkew
                 };
             });
+            #endregion
         }
     }
 }

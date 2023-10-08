@@ -1,4 +1,4 @@
-﻿using Auth.Models;
+﻿using Common.Models;
 
 namespace Auth.Services.Interfaces
 {

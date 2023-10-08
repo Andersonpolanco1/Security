@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Auth.Models
+﻿
+namespace Common.Models
 {
     public class UserRole
     {
