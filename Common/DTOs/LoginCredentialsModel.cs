@@ -2,7 +2,7 @@
 
 namespace Common.DTOs
 {
-    public class LoginRequestModel
+    public class LoginCredentialsModel
     {
         public string Username { get; set; }
 

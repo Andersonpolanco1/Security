@@ -18,7 +18,7 @@ namespace Auth.Services
             _logger = logger;
         }
 
-        public async Task<User?> GetUserByCredentialsAsync(LoginRequestModel userCredentials)
+        public async Task<User?> GetUserByCredentialsAsync(LoginCredentialsModel userCredentials)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Auth.Services
                     { "ApiKey", _configuration["UserManagerApiKey"] }
                 };
 
-                var response = await Common.Http.HttpRequest.HttpPostAsync<User, LoginRequestModel>(uri, userCredentials, authHeaders);
+                var response = await Common.Http.HttpRequest.HttpPostAsync<User, LoginCredentialsModel>(uri, userCredentials, authHeaders);
 
                 LogUserInformation(response.Data);
 

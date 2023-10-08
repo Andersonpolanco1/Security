@@ -18,7 +18,7 @@ namespace UserManager.Services
             _context = context;
         }
 
-        public async Task<User> CreateUserAsync(UserCreateModel userCreate)
+        public async Task<UserRead> CreateUserAsync(UserCreateModel userCreate)
         {
             string salt = BCrypt.GenerateSalt(12);
             string hashedPassword = BCrypt.HashPassword(userCreate.Password, salt);
@@ -34,34 +34,24 @@ namespace UserManager.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return user.AsUserRead();
         }
 
-        public async Task<User?> GetUserByCredentialsAsync(string username, string password)
+        public async Task<UserRead?> GetUserByCredentialsAsync(LoginCredentialsModel credentials)
         {
-            var user = await  _context.Users.SingleOrDefaultAsync(u => u.Username == username);
+            var user = await  _context.Users.SingleOrDefaultAsync(u => u.Username == credentials.Username);
 
             if (user is null)
-                return user;
+                return null;
 
-            string hashedPassword = BCrypt.HashPassword(password, user.Salt);
-            return hashedPassword == user.PasswordHash ? user : null;
+            string hashedPassword = BCrypt.HashPassword(credentials.Password, user.Salt);
+            return hashedPassword == user.PasswordHash ? user.AsUserRead() : null;
         }
 
-        public User GetUserById(string id)
+        public async Task<UserRead?> GetUserByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> VerifyPasswordAsync(string username, string password)
-        {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
-
-            if (user == null)
-                return false;
-            
-            string hashedPassword = BCrypt.HashPassword(password, user.Salt);
-            return hashedPassword == user.PasswordHash;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return user is null ? null : user.AsUserRead();
         }
 
         public async Task<IEnumerable<UserRead>> GetUsersAsync()

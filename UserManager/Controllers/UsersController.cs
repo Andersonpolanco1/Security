@@ -20,6 +20,8 @@ namespace UserManager.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateUser(UserCreateModel userCreate)
         {
             if(!ModelState.IsValid) 
@@ -30,29 +32,22 @@ namespace UserManager.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserRead>))]
         public async Task<IActionResult> GetUsers()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var users = await _userService.GetUsersAsync();
             return Ok(users);
         }
 
 
         [Authorize(AuthenticationSchemes = "Bearer,ApiKey")]
-        [HttpPost("Credentials")]
-        public async Task<IActionResult> FindByCredentials([FromBody] LoginRequestModel param)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpPost("auth")]
+        public async Task<IActionResult> GetByCredentials([FromBody] LoginCredentialsModel credentials)
         {
-            var userCreated = await _userService.GetUserByCredentialsAsync(param.Username,param.Password);
-            return Ok(userCreated);
-        }
-
-        [HttpPost("VerifyPassword")]
-        public async Task<IActionResult> VerifyPasswordAsync([FromBody] LoginRequestModel param)
-        {
-            var userCreated = await _userService.VerifyPasswordAsync(param.Username, param.Password);
-            return Ok(userCreated);
+            var user = await _userService.GetUserByCredentialsAsync(credentials);
+            return user is null ? NoContent() : Ok(user);
         }
     }
 }
