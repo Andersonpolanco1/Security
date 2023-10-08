@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace UserManager.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer,ApiKey")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -29,6 +29,18 @@ namespace UserManager.Controllers
             return Ok(userCreated); 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var users = await _userService.GetUsersAsync();
+            return Ok(users);
+        }
+
+
+        [Authorize(AuthenticationSchemes = "Bearer,ApiKey")]
         [HttpPost("Credentials")]
         public async Task<IActionResult> FindByCredentials([FromBody] LoginRequestModel param)
         {

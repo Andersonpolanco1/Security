@@ -7,6 +7,7 @@ namespace UserManager.Services
     using Microsoft.EntityFrameworkCore;
     using Common.Interfaces;
     using Common.Models;
+    using Common.DTOs;
 
     public class UserService:IUserService
     {
@@ -61,6 +62,20 @@ namespace UserManager.Services
             
             string hashedPassword = BCrypt.HashPassword(password, user.Salt);
             return hashedPassword == user.PasswordHash;
+        }
+
+        public async Task<IEnumerable<UserRead>> GetUsersAsync()
+        {
+            var users = await _context.Users.AsNoTracking()
+                .Select(u => new UserRead()
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    IsActive = u.IsActive
+                }).ToListAsync();
+
+            return users;
         }
     }
 }
