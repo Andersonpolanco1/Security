@@ -1,9 +1,10 @@
 using Common.Interfaces;
+using Common.Extensions;
+using Common.Models.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using UserManager.Data;
-using UserManager.Extensions;
-using UserManager.Models.Settings;
+
 using UserManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);

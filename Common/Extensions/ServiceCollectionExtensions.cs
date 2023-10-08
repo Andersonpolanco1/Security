@@ -1,10 +1,13 @@
 ﻿using Common.CustomAuth;
+using Common.Models.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using UserManager.Models.Settings;
 
-namespace UserManager.Extensions
+
+namespace Common.Extensions
 {
     public static class ServiceCollectionExtensions
     {

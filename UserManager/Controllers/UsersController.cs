@@ -25,7 +25,7 @@ namespace UserManager.Controllers
         public async Task<IActionResult> CreateUser(UserCreateModel userCreate)
         {
             if(!ModelState.IsValid) 
-                return BadRequest(ModelState);
+                return BadRequest(ModelState["errors"]);
 
             var userCreated = await _userService.CreateUserAsync(userCreate);
             return Ok(userCreated); 

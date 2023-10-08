@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace UserManager.Models.Settings
+namespace Common.Models.Settings
 {
     public class JwtSettings
     {
