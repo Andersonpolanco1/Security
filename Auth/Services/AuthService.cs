@@ -19,15 +19,10 @@ namespace Auth.Services
         public async Task<User?> GetUserByCredentialsAsync(LoginRequestModel userCredentials)
         {
 
-            //using var httpClient = new HttpClient();
-            //var request = new HttpRequestMessage(HttpMethod.Post, _configuration["Urls:UserManager"]);
-            //string jsonContent = JsonConvert.SerializeObject(userCredentials);
-            //request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            //request.Headers.Authorization = new AuthenticationHeaderValue("ApiKey", _configuration["UserManagerApiKey"]);
-            //HttpResponseMessage response = await httpClient.SendAsync(request);
-            //return null;
+            var authHeaders = new Dictionary<string, string>() { { "ApiKey", _configuration["UserManagerApiKey"] } };
+            var uri = _configuration["Urls:UserManager"];
 
-            var res = await HttpRequest.TryGetAsync<User>(userCredentials);
+            var res = await HttpRequest.HttpPostAsync<User,LoginRequestModel>(uri, userCredentials, authHeaders);
             return res.Data;
         }
     }
