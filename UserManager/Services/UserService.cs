@@ -9,7 +9,7 @@ namespace UserManager.Services
     using Common.Models;
     using Common.DTOs;
     using Common.Extensions;
-    using Microsoft.Data.SqlClient;
+    using Common.DTOs.User;
 
     public class UserService:IUserService
     {
@@ -25,7 +25,7 @@ namespace UserManager.Services
         public async Task<UserRead> CreateUserAsync(UserCreateModel userCreate)
         {
             if (UserNameOrEmailIsInUse(userCreate))
-                throw new Exception("Username or Email is in use");
+                throw new Exception("Username or Email in use");
 
             string salt = BCrypt.GenerateSalt(12);
             string hashedPassword = BCrypt.HashPassword(userCreate.Password, salt);

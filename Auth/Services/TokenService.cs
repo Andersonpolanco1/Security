@@ -1,7 +1,7 @@
 ﻿using Auth.Models;
 using Auth.Models.Settings;
 using Auth.Services.Interfaces;
-using Common.DTOs;
+using Common.DTOs.User;
 using Common.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

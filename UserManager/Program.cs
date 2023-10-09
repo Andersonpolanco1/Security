@@ -87,13 +87,12 @@ builder.Services.AddCors(options =>
             .WithMethods(HttpMethods.Get, HttpMethods.Post)
             )
     );
-
-builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.AddApiKeyAuthentication();
+builder.Services.AddBearerAuthentication(builder.Configuration);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SettingPath));
 builder.Services.AddScoped<IUserService, UserService>();
 
 
@@ -104,8 +103,6 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
     c.OAuthUsePkce();
 });
-
-//app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors();

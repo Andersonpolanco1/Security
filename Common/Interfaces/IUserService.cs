@@ -1,5 +1,5 @@
 ﻿using Common.DTOs;
-using Common.Models;
+using Common.DTOs.User;
 
 namespace Common.Interfaces
 {

@@ -1,9 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using Common.Interfaces;
-using Common.Models;
 using Common.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Common.DTOs.User;
 
 namespace UserManager.Controllers
 {
@@ -46,7 +46,7 @@ namespace UserManager.Controllers
             return Ok(users);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserById(Guid id)
@@ -56,7 +56,7 @@ namespace UserManager.Controllers
         }
 
 
-        [Authorize(AuthenticationSchemes = "Bearer,ApiKey")]
+        [Authorize(AuthenticationSchemes = "ApiKey")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost("auth")]

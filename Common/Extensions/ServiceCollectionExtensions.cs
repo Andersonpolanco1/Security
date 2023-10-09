@@ -11,18 +11,20 @@ namespace Common.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddApiKeyAuthentication(this IServiceCollection services)
         {
-            #region ApiKey Scheme
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = ApiKeyAuthOptions.DefaultScheme;
                 options.DefaultChallengeScheme = ApiKeyAuthOptions.DefaultScheme;
             }).AddScheme<ApiKeyAuthOptions, ApiKeyAuthHandler>(ApiKeyAuthOptions.DefaultScheme, apikeyOptions => new ApiKeyAuthOptions());
-            #endregion
+        }
 
-            #region Bearer Scheme
+        public static void AddBearerAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SettingPath));
             var jwtSettings = configuration.GetSection(JwtSettings.SettingPath).Get<JwtSettings>();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -38,7 +40,6 @@ namespace Common.Extensions
                     ClockSkew = jwtSettings.ClockSkew
                 };
             });
-            #endregion
         }
     }
 }

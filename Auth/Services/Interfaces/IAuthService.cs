@@ -1,4 +1,5 @@
 ﻿using Common.DTOs;
+using Common.DTOs.User;
 using Common.Http;
 using Common.Models;
 

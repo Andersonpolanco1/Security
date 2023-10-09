@@ -1,5 +1,4 @@
-﻿
-using Common.DTOs;
+﻿using Common.DTOs.User;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Policy;
 
@@ -24,7 +23,7 @@ namespace Common.Models
         /// <summary>
         /// Method that convert User entity to an entity to expose data outside
         /// </summary>
-        /// <returns>UserRead class, User representation outside</returns>
+        /// <returns>An <see cref="UserRead"/> class, User representation outside</returns>
         public UserRead AsUserRead()
         {
             return new UserRead

@@ -1,4 +1,4 @@
-﻿using Common.DTOs;
+﻿using Common.DTOs.User;
 using Common.Models;
 
 namespace Auth.Services.Interfaces

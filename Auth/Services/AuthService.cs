@@ -3,7 +3,7 @@ using Common.Models;
 using Auth.Services.Interfaces;
 using Common.DTOs;
 using System.Net;
-
+using Common.DTOs.User;
 
 namespace Auth.Services
 {
