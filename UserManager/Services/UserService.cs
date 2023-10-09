@@ -39,7 +39,7 @@ namespace UserManager.Services
 
         public async Task<UserRead?> GetUserByCredentialsAsync(LoginCredentialsModel credentials)
         {
-            var user = await  _context.Users.SingleOrDefaultAsync(u => u.Username == credentials.Username);
+            var user = await  _context.Users.FirstOrDefaultAsync(u => u.Username == credentials.Username);
 
             if (user is null)
                 return null;

@@ -13,24 +13,35 @@ namespace Common.CustomAuth
 {
     public class ApiKeyAuthHandler : AuthenticationHandler<ApiKeyAuthOptions>
     {
-        public ApiKeyAuthHandler(IOptionsMonitor<ApiKeyAuthOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) 
-            : base(options,logger,encoder,clock)
+        private ILogger<ApiKeyAuthHandler> _logger;
+
+        public ApiKeyAuthHandler(IOptionsMonitor<ApiKeyAuthOptions> options, ILoggerFactory loggerFactory, UrlEncoder encoder, ISystemClock clock) 
+            : base(options,loggerFactory,encoder,clock)
         {
-                
+            _logger = loggerFactory.CreateLogger<ApiKeyAuthHandler>();
+
         }
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.TryGetValue(HeaderNames.Authorization, out var authorization))
             {
-                return Task.FromResult(AuthenticateResult.Fail("Please insert apikey string in header"));
+                var meessage = "Please insert apikey string in header";
+                _logger.LogWarning(meessage);
+                return Task.FromResult(AuthenticateResult.Fail(meessage));
             }
 
             var keyArray = authorization.FirstOrDefault()?.Split(" ");
+
             var pairOfKeyValue = 2;
             if (keyArray == null || keyArray.Length != pairOfKeyValue)
             {
-                return Task.FromResult(AuthenticateResult.Fail("Invalid apikey string in header"));
+                return HandleFailAttemp("Invalid apikey string in header");
+            }
+
+            if(!"ApiKey".Equals(keyArray[0], StringComparison.OrdinalIgnoreCase))
+            {
+                return HandleFailAttemp("Urong key name");
             }
 
             var configuration = Context.RequestServices.GetRequiredService<IConfiguration>();
@@ -38,7 +49,7 @@ namespace Common.CustomAuth
 
             if (!apikey.Equals(keyArray[1]))
             {
-                return Task.FromResult(AuthenticateResult.Fail("Invalid apikey"));
+                return HandleFailAttemp("Invalid ApiKey");
             }
 
             var identity = new ClaimsIdentity("ApiKey");
@@ -46,6 +57,12 @@ namespace Common.CustomAuth
             var ticket = new AuthenticationTicket(principal, Options.Scheme);
 
             return Task.FromResult(AuthenticateResult.Success(ticket));
+        }
+
+        private Task<AuthenticateResult> HandleFailAttemp(string message)
+        {
+            _logger.LogWarning(message);
+            return Task.FromResult(AuthenticateResult.Fail(message));
         }
 
     }

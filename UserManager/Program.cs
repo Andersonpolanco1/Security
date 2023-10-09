@@ -6,20 +6,10 @@ using Microsoft.OpenApi.Models;
 using UserManager.Data;
 
 using UserManager.Services;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowLocalhost",
-        builder =>
-        {
-            builder
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -88,9 +78,15 @@ builder.Services.AddSwaggerGen(c =>
     #endregion
 });
 
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(builder =>
+        builder.WithOrigins("https://localhost:7090")
+            .AllowAnyHeader()
+            .WithMethods(HttpMethods.Get, HttpMethods.Post)
+            )
+    );
+
 builder.Services.ConfigureAuthentication(builder.Configuration);
-
-
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -109,8 +105,8 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-
-app.UseCors("AllowLocalhost");
+app.UseRouting();
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
