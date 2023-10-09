@@ -30,18 +30,17 @@ namespace Common.CustomAuth
                 _logger.LogWarning(meessage);
                 return Task.FromResult(AuthenticateResult.Fail(meessage));
             }
-            var hasBearerHeader = authorization.Any(a => a.Contains("bearer", StringComparison.CurrentCultureIgnoreCase));
             var keyArray = authorization.FirstOrDefault()?.Split(" ");
 
             var pairOfKeyValue = 2;
             if (keyArray == null || keyArray.Length != pairOfKeyValue)
             {
-                return HandleFailAttemp("Invalid apikey string in header", hasBearerHeader);
+                return HandleFailAttemp("Invalid apikey string in header");
             }
 
             if(!"ApiKey".Equals(keyArray[0], StringComparison.OrdinalIgnoreCase))
             {
-                return HandleFailAttemp("Urong key name", hasBearerHeader);
+                return HandleFailAttemp("Urong key name");
             }
 
             var configuration = Context.RequestServices.GetRequiredService<IConfiguration>();
@@ -49,7 +48,7 @@ namespace Common.CustomAuth
 
             if (!apikey.Equals(keyArray[1]))
             {
-                return HandleFailAttemp("Invalid ApiKey", hasBearerHeader);
+                return HandleFailAttemp("Invalid ApiKey");
             }
 
             var identity = new ClaimsIdentity("ApiKey");
@@ -59,17 +58,9 @@ namespace Common.CustomAuth
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
 
-        /// <summary>
-        /// If has bearer header, not log this fail. The client is trying authenticate by that way.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="hasBearerHeader"></param>
-        /// <returns></returns>
-        private Task<AuthenticateResult> HandleFailAttemp(string message, bool hasBearerHeader)
-        {
-            if(!hasBearerHeader)
-                _logger.LogWarning(message);
 
+        private Task<AuthenticateResult> HandleFailAttemp(string message)
+        {
             return Task.FromResult(AuthenticateResult.Fail(message));
         }
 
