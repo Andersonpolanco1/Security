@@ -46,6 +46,15 @@ namespace UserManager.Controllers
             return Ok(users);
         }
 
+        [HttpGet("/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetUserById(Guid id)
+        {
+            var users = await _userService.GetUserByIdAsync(id);
+            return Ok(users);
+        }
+
 
         [Authorize(AuthenticationSchemes = "Bearer,ApiKey")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]

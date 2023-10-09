@@ -7,6 +7,8 @@ using UserManager.Data;
 
 using UserManager.Services;
 using Microsoft.Net.Http.Headers;
+using System.Net.Http.Headers;
+using System.Reflection.PortableExecutable;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +82,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
-        builder.WithOrigins("https://localhost:7090")
+        builder.WithOrigins("http://localhost:5207")
             .AllowAnyHeader()
             .WithMethods(HttpMethods.Get, HttpMethods.Post)
             )
@@ -103,7 +105,7 @@ app.UseSwaggerUI(c =>
     c.OAuthUsePkce();
 });
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors();

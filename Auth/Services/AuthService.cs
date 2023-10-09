@@ -11,25 +11,20 @@ namespace Auth.Services
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
+        private readonly IAppHttpClient _client;
 
-        public AuthService(IConfiguration configuration, ILogger<AuthService> logger)
+        public AuthService(IConfiguration configuration, ILogger<AuthService> logger, IAppHttpClient client)
         {
             _configuration = configuration;
             _logger = logger;
+            _client = client;
         }
 
         public async Task<UserRead?> GetUserByCredentialsAsync(LoginCredentialsModel userCredentials)
         {
             try
             {
-                var uri = _configuration["Urls:UserManager"];
-
-                var authHeaders = new Dictionary<string, string>
-                {
-                    { "ApiKey", _configuration["UserManagerApiKey"] }
-                };
-
-                var response = await Common.Http.HttpRequest.HttpPostAsync<UserRead, LoginCredentialsModel>(uri, userCredentials, authHeaders);
+                var response = await _client.HttpPostAsync<UserRead,LoginCredentialsModel>(userCredentials);
 
                 LogUserInformation(response.Data);
 
