@@ -21,14 +21,21 @@ namespace UserManager.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRead))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> CreateUser(UserCreateModel userCreate)
         {
             if(!ModelState.IsValid) 
-                return BadRequest(ModelState["errors"]);
+                return BadRequest(ModelState);
 
-            var userCreated = await _userService.CreateUserAsync(userCreate);
-            return Ok(userCreated); 
+            try
+            {
+                var userCreated = await _userService.CreateUserAsync(userCreate);
+                return Ok(userCreated);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            } 
         }
 
         [HttpGet]

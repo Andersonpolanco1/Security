@@ -24,31 +24,32 @@ namespace Common.Http
         {
             try
             {
-                using var client = new HttpClient();
-
-                if(authHeaders != null)
+                using (var client = new HttpClient())
                 {
-                    foreach (var header in authHeaders)
+                    if (authHeaders != null)
                     {
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(header.Key, header.Value);
+                        foreach (var header in authHeaders)
+                        {
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(header.Key, header.Value);
+                        }
                     }
-                }
 
-                if (headers != null)
-                {
-                    foreach (var header in headers)
+                    if (headers != null)
                     {
-                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                        foreach (var header in headers)
+                        {
+                            client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                        }
                     }
-                }
 
-                HttpResponseMessage response = await client.PostAsJsonAsync(apiUrl, content);
+                    HttpResponseMessage response = await client.PostAsJsonAsync(apiUrl, content);
 
-                if (!response.IsSuccessStatusCode)
-                    return new Result<Tout>(response.StatusCode, response.ReasonPhrase);
+                    if (!response.IsSuccessStatusCode)
+                        return new Result<Tout>(response.StatusCode, response.ReasonPhrase);
 
-                var responseBody = await response.Content.ReadAsStringAsync();
-                return new Result<Tout>(HttpStatusCode.OK,string.Empty, JsonConvert.DeserializeObject<Tout>(responseBody));
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    return new Result<Tout>(HttpStatusCode.OK, string.Empty, JsonConvert.DeserializeObject<Tout>(responseBody));
+                };
             }
             catch (Exception ex)
             {

@@ -18,7 +18,7 @@ namespace Auth.Services
             _logger = logger;
         }
 
-        public async Task<User?> GetUserByCredentialsAsync(LoginCredentialsModel userCredentials)
+        public async Task<UserRead?> GetUserByCredentialsAsync(LoginCredentialsModel userCredentials)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Auth.Services
                     { "ApiKey", _configuration["UserManagerApiKey"] }
                 };
 
-                var response = await Common.Http.HttpRequest.HttpPostAsync<User, LoginCredentialsModel>(uri, userCredentials, authHeaders);
+                var response = await Common.Http.HttpRequest.HttpPostAsync<UserRead, LoginCredentialsModel>(uri, userCredentials, authHeaders);
 
                 LogUserInformation(response.Data);
 
@@ -47,7 +47,7 @@ namespace Auth.Services
             }
         }
 
-        private void LogUserInformation(User user)
+        private void LogUserInformation(UserRead user)
         {
             if (user != null)
             {
@@ -55,13 +55,13 @@ namespace Auth.Services
             }
         }
 
-        private User HandleInternalServerError(string message, User data)
+        private UserRead HandleInternalServerError(string message, UserRead data)
         {
             _logger.LogError(message);
             return data;
         }
 
-        private User HandleOtherStatusCodes(string message, User data)
+        private UserRead HandleOtherStatusCodes(string message, UserRead data)
         {
             _logger.LogWarning(message);
             return data;

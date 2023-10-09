@@ -8,43 +8,61 @@ namespace UserManager.Services
     using Common.Interfaces;
     using Common.Models;
     using Common.DTOs;
+    using Common.Extensions;
+    using Microsoft.Data.SqlClient;
 
     public class UserService:IUserService
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(ApplicationDbContext context)
+        public UserService(ApplicationDbContext context, ILogger<UserService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<UserRead> CreateUserAsync(UserCreateModel userCreate)
         {
+            if (UserNameOrEmailIsInUse(userCreate))
+                throw new Exception("Username or Email is in use");
+
             string salt = BCrypt.GenerateSalt(12);
             string hashedPassword = BCrypt.HashPassword(userCreate.Password, salt);
-            
+
             var user = new User
             {
-                Username = userCreate.Username,
+                Username = userCreate.Username.Trim().Capitalize(),
                 PasswordHash = hashedPassword,
-                Salt = salt,
-                Email = userCreate.Email
+                PasswordSalt = salt,
+                Email = userCreate.Email.Trim().ToLower(),
+                CreatedAt = DateTime.Now
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"User added: {user.Id}");
+                return user.AsUserRead();
 
-            return user.AsUserRead();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
         }
 
         public async Task<UserRead?> GetUserByCredentialsAsync(LoginCredentialsModel credentials)
         {
-            var user = await  _context.Users.FirstOrDefaultAsync(u => u.Username == credentials.Username);
+            var user = await _context.Users.FirstOrDefaultAsync(u =>
+                u.Email.ToLower() == credentials.Email.ToLower());
 
             if (user is null)
                 return null;
 
-            string hashedPassword = BCrypt.HashPassword(credentials.Password, user.Salt);
+            string hashedPassword = BCrypt.HashPassword(credentials.Password, user.PasswordSalt);
             return hashedPassword == user.PasswordHash ? user.AsUserRead() : null;
         }
 
@@ -66,6 +84,11 @@ namespace UserManager.Services
                 }).ToListAsync();
 
             return users;
+        }
+
+        private bool UserNameOrEmailIsInUse(UserCreateModel user)
+        {
+            return _context.Users.Any(u => u.Username == user.Username || u.Email == user.Email);
         }
     }
 }

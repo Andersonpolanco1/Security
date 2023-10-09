@@ -1,6 +1,7 @@
 ﻿using Auth.Models;
 using Auth.Models.Settings;
 using Auth.Services.Interfaces;
+using Common.DTOs;
 using Common.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +20,7 @@ namespace Auth.Services
             _jwtSettings = jwtSettings.Value;
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(UserRead user)
         {
             var jwtKeyArray = Encoding.UTF8.GetBytes(_jwtSettings.Key);
             var securityKey = new SymmetricSecurityKey(jwtKeyArray);

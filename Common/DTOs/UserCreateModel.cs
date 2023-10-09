@@ -8,6 +8,7 @@ namespace Common.Models
         public string Username { get; set; }
 
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

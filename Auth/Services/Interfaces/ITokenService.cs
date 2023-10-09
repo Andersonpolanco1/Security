@@ -1,9 +1,10 @@
-﻿using Common.Models;
+﻿using Common.DTOs;
+using Common.Models;
 
 namespace Auth.Services.Interfaces
 {
     public interface ITokenService
     {
-        string GenerateToken(User user);
+        string GenerateToken(UserRead user);
     }
 }

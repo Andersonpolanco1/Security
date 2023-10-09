@@ -24,8 +24,12 @@ namespace Auth.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string[]))]
         public async Task<IActionResult> Post([FromBody] LoginCredentialsModel loginRequest)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState["Errors"]);
+
             var user = await _authService.GetUserByCredentialsAsync(loginRequest);
             return user == null ? Ok("Invalid loggin attemp") : Ok(_tokenService.GenerateToken(user));
         }

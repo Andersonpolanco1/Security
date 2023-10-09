@@ -6,6 +6,6 @@ namespace Auth.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<User?> GetUserByCredentialsAsync(LoginCredentialsModel credentials);
+        Task<UserRead?> GetUserByCredentialsAsync(LoginCredentialsModel credentials);
     }
 }
